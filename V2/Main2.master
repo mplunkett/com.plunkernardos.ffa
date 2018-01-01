@@ -1,0 +1,213 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Main2.master.cs" Inherits="V2_Main2" %>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fantasy Football Auction</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+    body {
+        padding-top: 70px;
+        /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>-->
+                <a class="navbar-brand" href="#">FFA</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <!--<ul class="nav navbar-nav">
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#">Services</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>-->
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <form id="MainForm" runat="server">
+            <input type="hidden" value="" id="LoggedUserVal" runat="server" />
+            <input type="hidden" value="" id="LoggedAuctionVal" runat="server" />
+            <input type="hidden" value="" id="LoggedTeamVal" runat="server" />
+            <input type="hidden" value="" id="LoggedTeamName" runat="server" />
+        </form>
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-10">
+                <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+                </asp:ContentPlaceHolder>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Cash Remaining
+                            </div>
+                            <div class="panel-body">
+                                <h3><span class="big-text" id="CurCashLeft"></span></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Highest Possible Bid
+                        </div>
+                        <div class="panel-body">
+                            <h3><span class="big-text" id="HighBidLeft"></span></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            My Roster
+                        </div>
+                        <div id="CurRosterBox">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+    <asp:ContentPlaceHolder ID="ModalContent" runat="server">
+
+    </asp:ContentPlaceHolder>
+    <!-- jQuery Version 1.11.1 -->
+    <script src="js/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#TeamDisplay").html($("#LoggedTeamName").val());
+            setInterval(function () {
+                RefreshPage();
+            }, 1000);
+        });
+
+        function RefreshPage() {
+            GetCashLeft();
+            GetHighBidLeft();
+            GetCurrentRoster();
+        }
+
+        function GetCashLeft() {
+            var teamId = $("#LoggedTeamVal").val();
+            var auctionId = $("#LoggedAuctionVal").val();
+            var dataString = "{teamId: '" + teamId + "', auctionId: '" + auctionId + "'}";
+            $.ajax({
+                type: "POST",
+                url: "Functions.aspx/GetCurrentCash",
+                data: dataString,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    var resp = msg.d;
+                    $("#CurCashLeft").html("$" + resp);
+                },
+                error: function (XMLHttpRequest, textStatus, exception) {
+                    $("#AjaxMessage").html(exception);
+                },
+                async: false
+            });
+        }
+
+        function GetHighBidLeft() {
+            var teamId = $("#LoggedTeamVal").val();
+            var auctionId = $("#LoggedAuctionVal").val();
+            var dataString = "{teamId: '" + teamId + "', auctionId: '" + auctionId + "'}";
+            $.ajax({
+                type: "POST",
+                url: "Functions.aspx/GetHighBid",
+                data: dataString,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    var resp = msg.d;
+                    $("#HighBidLeft").html("$" + resp);
+                },
+                error: function (XMLHttpRequest, textStatus, exception) {
+                    $("#AjaxMessage").html(exception);
+                },
+                async: false
+            });
+        }
+
+        function GetCurrentRoster() {
+            var teamId = $("#LoggedTeamVal").val();
+            var auctionId = $("#LoggedAuctionVal").val();
+            var dataString = "{teamId: '" + teamId + "', auctionId: '" + auctionId + "'}";
+            $.ajax({
+                type: "POST",
+                url: "Functions.aspx/GetRoster",
+                data: dataString,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    var resp = msg.d;
+                    $("#CurRosterBox").html(resp);
+                },
+                error: function (XMLHttpRequest, textStatus, exception) {
+                    $("#AjaxMessage").html(exception);
+                },
+                async: false
+            });
+        }
+    </script>
+    <!-- Container for page specific js -->    
+    <asp:ContentPlaceHolder ID="pagejs" runat="server">
+
+    </asp:ContentPlaceHolder>
+</body>
+
+</html>

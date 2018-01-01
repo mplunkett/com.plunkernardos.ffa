@@ -1,0 +1,228 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Main.master.cs" Inherits="Main" %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Fantasy Football Auction</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Fantasy Football Auction">
+        <meta name="keywords" content="Fantasy Football">
+        <meta charset="UTF-8">
+         
+        <!-- CSS -->
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="css/calendar.min.css" rel="stylesheet">
+        <link href="css/icomoon.min.css" rel="stylesheet">
+        <link href="css/media-player.min.css" rel="stylesheet">
+        <link href="css/file-manager.min.css" rel="stylesheet">
+        <link href="css/form.min.css" rel="stylesheet">
+        <link href="css/style.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Header -->
+        <header id="header" class="clearfix">
+            <form id="MainForm" runat="server">
+                <input type="hidden" value="" id="LoggedUserVal" runat="server" />
+                <input type="hidden" value="" id="LoggedAuctionVal" runat="server" />
+                <input type="hidden" value="" id="LoggedTeamVal" runat="server" />
+                <input type="hidden" value="" id="LoggedTeamName" runat="server" />
+            </form>
+            <!-- Logo -->
+            <a href="index.php" class="logo shadowed">
+                FFA 1.0
+            </a>
+            <div class="profile-menu shadowed" id="TeamDisplay">
+                
+            </div>
+            <!--<div class="dropdown profile-menu shadowed">                
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">                   
+                    <img src="img/profile-pics/profile-pic.png" alt="" class="profile-pic">
+                </a>
+                <ul class="dropdown-menu pull-right text-right">
+                    <li><a href="">Update Profile</a></li>
+                    <li><a href="">Notifications & Updates</a></li>
+                    <li><a href="">Settings</a></li>
+                    <li class="divider"></li>
+                    <li><a href="">Sign-Out</a></li>
+                </ul>
+            </div> -->             
+        </header>          
+        <section id="main" role="main">
+            <!-- Left Sidebar -->
+            <aside id="leftbar" class="pull-left">
+                <div class="sidebar-container">
+                    <!-- Main Menu -->
+                    <ul class="side-menu shadowed">
+                        <li>
+                            <a href="Default.aspx"><i class="icon-home"></i>Home</a>
+                        </li>
+                        <li>
+                            <a href="Watchlist.aspx"><i class="icon-zoom-in"></i>WatchList</a>
+                        </li>
+                        <li>
+                            <a href="AuctionHouse.aspx"><i class="icon-hammer"></i>Auction House</a>
+                        </li>
+                    </ul>
+                </div>
+                <span id="leftbar-toggle" class="visible-xs sidebar-toggle">
+                    <i class="icon-angle-right"></i>
+                </span>
+            </aside>               
+            <!-- Right Sidebar -->
+            <aside id="rightbar" class="pull-right">
+                <div class="sidebar-container">
+                    <!-- Date + Clock -->
+                    <div class="clock shadowed">
+                        <div id="date"></div>
+                        <div id="time">
+                            <span id="hours"></span>
+                            :
+                            <span id="min"></span>
+                            :
+                            <span id="sec"></span>
+                        </div>
+                    </div>                    
+                    <div class="shadowed side-progress">
+                        <h3 class="title">Cash Remaining</h3>
+                        <div class="side-border">
+                            <span class="big-text" id="CurCashLeft"></span>
+                        </div>
+                    </div>
+                    <div class="shadowed side-progress">
+                        <h3 class="title">Highest Possible Bid</h3>
+                        <div class="side-border">
+                            <span class="big-text" id="HighBidLeft"></span>
+                        </div>
+                    </div>
+                    <div class="shadowed side-progress">
+                        <h3 class="title">My Roster</h3>
+                        <div class="side-border" id="CurRosterBox">
+                            
+                        </div>
+                    </div>
+                </div>                    
+                <span id="rightbar-toggle" class="hidden-lg sidebar-toggle">
+                    <i class="icon-angle-left"></i>
+                </span>
+            </aside>
+            <section id="content" class="container">
+                <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+                </asp:ContentPlaceHolder>
+            </section>
+            <!-- This is the Modal container -->
+            <asp:ContentPlaceHolder ID="ModalContent" runat="server">
+
+            </asp:ContentPlaceHolder>
+        </section>
+        <footer id="footer">
+            <div id="AjaxMessage">
+                
+            </div>
+        </footer>         
+        <!-- Javascipt -->
+        <script src="js/jquery-1.10.2.min.js"></script>
+        <script src='js/jquery-ui-1.10.3.min.js'></script>
+        <script src="js/chart/highcharts.js"></script>
+        <script src="js/chart/modules/exporting.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/feeds.js"></script>
+        <script src="js/chosen.js"></script>
+        <script src="js/shadowbox.js"></script>
+        <script src="js/sparkline.min.js"></script>
+        <script src="js/masonry.min.js"></script>
+        <script src="js/enscroll.min.js"></script>
+        <script src='js/calendar.min.js'></script>
+        <script src='js/datatables.min.js'></script>
+        <script src='js/autosize.min.js'></script>
+        <script src='js/select.min.js'></script>
+        <script src="js/toggler.min.js"></script>
+        <script src="js/datetimepicker.min.js"></script>
+        <script src="js/colorpicker.min.js"></script>
+        <script src="js/fileupload.min.js"></script>
+        <script src="js/media-player.js"></script>
+        <script src="js/validation/validate.min.js"></script>
+        <script src="js/validation/validationEngine.min.js"></script>
+        <script src="js/functions.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#TeamDisplay").html($("#LoggedTeamName").val());
+                setInterval(function () {
+                    RefreshPage();
+                }, 500);
+            });
+
+            function RefreshPage() {
+                GetCashLeft();
+                GetHighBidLeft();
+                GetCurrentRoster();
+            }
+
+            function GetCashLeft() {
+                var teamId = $("#LoggedTeamVal").val();
+                var auctionId = $("#LoggedAuctionVal").val();
+                var dataString = "{teamId: '" + teamId + "', auctionId: '" + auctionId + "'}";
+                $.ajax({
+                    type: "POST",
+                    url: "Default.aspx/GetCurrentCash",
+                    data: dataString,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {                        
+                        var resp = msg.d;
+                        $("#CurCashLeft").html("$" + resp);
+                    },
+                    error: function (XMLHttpRequest, textStatus, exception) {
+                        $("#AjaxMessage").html(exception);                        
+                    },
+                    async: false
+                });
+            }
+
+            function GetHighBidLeft() {
+                var teamId = $("#LoggedTeamVal").val();
+                var auctionId = $("#LoggedAuctionVal").val();
+                var dataString = "{teamId: '" + teamId + "', auctionId: '" + auctionId + "'}";
+                $.ajax({
+                    type: "POST",
+                    url: "Default.aspx/GetHighBid",
+                    data: dataString,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {                        
+                        var resp = msg.d;
+                        $("#HighBidLeft").html("$" + resp);
+                    },
+                    error: function (XMLHttpRequest, textStatus, exception) {
+                        $("#AjaxMessage").html(exception);
+                    },
+                    async: false
+                });
+            }
+
+            function GetCurrentRoster() {
+                var teamId = $("#LoggedTeamVal").val();
+                var auctionId = $("#LoggedAuctionVal").val();
+                var dataString = "{teamId: '" + teamId + "', auctionId: '" + auctionId + "'}";
+                $.ajax({
+                    type: "POST",
+                    url: "Default.aspx/GetRoster",
+                    data: dataString,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {                        
+                        var resp = msg.d;
+                        $("#CurRosterBox").html(resp);
+                    },
+                    error: function (XMLHttpRequest, textStatus, exception) {
+                        $("#AjaxMessage").html(exception);
+                    },
+                    async: false
+                });
+            }
+        </script>
+        <!-- Container for page specific js -->
+        <asp:ContentPlaceHolder ID="pagejs" runat="server">
+
+        </asp:ContentPlaceHolder>
+    </body>
+</html>
